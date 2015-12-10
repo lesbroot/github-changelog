@@ -19,7 +19,7 @@
     (join \newline ["The following errors occurred while parsing your command:" "" (join \newline prefixed-errors)])))
 
 (def cli-options
-  [["--token TOKEN" "GitHub api token"
+  [["-t" "--token TOKEN" "GitHub api token"
     :validate (min-length 40)]
 
    ["-d" "--debug" "Turn on debug mode"]

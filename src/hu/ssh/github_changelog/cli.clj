@@ -2,7 +2,9 @@
   (:require
     [clojure.tools.cli :as cli]
     [clojure.string :refer [join]]
-    [hu.ssh.github-changelog.core :refer [changelog]])
+    [hu.ssh.github-changelog.core :refer [changelog]]
+    [hu.ssh.github-changelog.formatters.markdown :as mdown]
+    [hu.ssh.github-changelog.util :refer [load-config]])
   (:gen-class))
 
 (defn- min-length [min]
@@ -17,8 +19,7 @@
     (join \newline ["The following errors occurred while parsing your command:" "" (join \newline prefixed-errors)])))
 
 (def cli-options
-  [["-o" "--token TOKEN" "Sets the OAuth token"
-    :missing "Missing OAuth token"
+  [["--token TOKEN" "GitHub api token"
     :validate (min-length 40)]
 
    ["-d" "--debug" "Turn on debug mode"]
@@ -39,5 +40,6 @@
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors))
       (not (and user repo)) (exit 2 (usage summary)))
-
-    (changelog (merge {:user user :repo repo} options))))
+    (println
+     (mdown/format-tags
+      (take 1 (changelog (merge (load-config) {:repo repo :user user} options)))))))

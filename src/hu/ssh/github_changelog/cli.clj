@@ -21,7 +21,9 @@
 (def cli-options
   [["-t" "--token TOKEN" "GitHub api token"
     :validate (min-length 40)]
-
+   ["-c" "--count COUNT" "Revisions count"
+    :default 1
+    :parse-fn #(Integer/parseInt %)]
    ["-d" "--debug" "Turn on debug mode"]
    ["-h" "--help"]])
 
@@ -42,4 +44,4 @@
       (not (and user repo)) (exit 2 (usage summary)))
     (println
      (mdown/format-tags
-      (take 1 (changelog (merge (load-config) {:repo repo :user user} options)))))))
+      (take (options :count) (changelog (merge (load-config) {:repo repo :user user})))))))
